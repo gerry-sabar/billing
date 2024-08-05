@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "006b7cef-2eec-4152-8f88-8d654738260d",
+		"name": "billing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5506181"
+	},
+	"item": [
+		{
+			"name": "Create New Customer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"insert title\",\n    \"email\": \"aaa@aaa.com\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5050/v1/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"v1",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Loan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": 1,\n    \"interest_rate\": 0.1,\n    \"term_in_week\": 50,\n    \"principal\": \"5000000.00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5050/v1/loans",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"v1",
+						"loans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": 1,\n    \"customer_loan_id\": 6,\n    \"amount\": \"330000.00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5050/v1/payments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"v1",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"test edit\",\n    \"email\": \"edit@edit.com\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5050/v1/customers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"v1",
+						"customers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Outstanding",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5050/v1/customers/1/outstandings/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"v1",
+						"customers",
+						"1",
+						"outstandings",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

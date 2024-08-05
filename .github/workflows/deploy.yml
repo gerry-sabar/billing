@@ -1,0 +1,62 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build-and-deploy:
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Run tests
+      run: go test -v ./...
+
+    - name: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WIP }}
+        service_account: ${{ secrets.GCP_SA }}
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
+
+    - name: Check Artifact Registry
+      run: gcloud artifacts repositories list --project=${{ secrets.GCP_PROJECT_ID }} --location=${{ secrets.GCP_REGION }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY_JSON }}
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker
+
+    - name: Build Docker Image
+      run: docker build -t ${{ secrets.GCP_ARTIFACT }} .
+
+    - name: Auth docker push
+      run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${{ secrets.GCP_ARTIFACT }}
+
+    - name: Push Docker Image
+      run: docker push ${{ secrets.GCP_ARTIFACT }}
+
+    - name: Deploy to Cloud Run
+      run: gcloud run deploy golang-billing --image ${{ secrets.GCP_ARTIFACT }}:latest --region ${{ secrets.GCP_REGION }} --platform managed --service-account ${{ secrets.GCP_SA }}
